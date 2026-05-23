@@ -4,85 +4,115 @@ import {
   Paragraph,
   TextRun,
   AlignmentType,
-  HeadingLevel,
   Tab,
   TabStopType,
   TabStopPosition,
   BorderStyle,
 } from "docx";
 import { saveAs } from "file-saver";
+import { t } from "../i18n.js";
 
-const FONT = "Times New Roman";
+const alignMap = {
+  left: AlignmentType.LEFT,
+  center: AlignmentType.CENTER,
+  right: AlignmentType.RIGHT,
+};
 
-const text = (str, opts = {}) =>
-  new TextRun({ text: str || "", font: FONT, size: 22, ...opts });
+const sectionTitle = (theme, lang, key) =>
+  theme?.customSectionTitles?.[key]?.trim() || t(lang, `cvSections.${key}`);
 
-const para = (children, opts = {}) =>
-  new Paragraph({ children, spacing: { after: 60 }, ...opts });
+const labelFor = (theme, lang, key) =>
+  theme?.customSectionTitles?.[key]?.trim() || t(lang, `cvSections.${key}`);
 
-// Two-column row using right-aligned tab stop
-const twoColRow = (left, right, leftBold = false) =>
-  new Paragraph({
-    tabStops: [
-      {
-        type: TabStopType.RIGHT,
-        position: TabStopPosition.MAX,
-      },
-    ],
-    children: [
-      text(left, { bold: leftBold }),
-      new TextRun({ children: [new Tab()] }),
-      text(right),
-    ],
-    spacing: { after: 40 },
-  });
+export async function exportToWord(cv, opts = {}, filename = "cv.docx") {
+  const { lang = "en", theme = {} } = opts;
+  const FONT = theme.font || "Times New Roman";
+  const sizeHalfPt = Math.round((theme.fontSize || 11) * 2);
+  const accentHex = (theme.accent || "#000000").replace("#", "");
 
-const sectionTitle = (title) =>
-  new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { before: 200, after: 60 },
-    children: [text(title, { bold: true, size: 24 })],
-    border: {
-      bottom: {
-        color: "000000",
-        space: 1,
-        size: 6,
-        style: BorderStyle.SINGLE,
-      },
-    },
-  });
+  const text = (str, o = {}) =>
+    new TextRun({ text: str || "", font: FONT, size: sizeHalfPt, ...o });
 
-const bullet = (str) =>
-  new Paragraph({
-    children: [text(str)],
-    bullet: { level: 0 },
-    spacing: { after: 20 },
-  });
+  const para = (children, o = {}) =>
+    new Paragraph({ children, spacing: { after: 60 }, ...o });
 
-export async function exportToWord(cv, filename = "cv.docx") {
+  const twoColRow = (left, right, leftBold = false) =>
+    new Paragraph({
+      tabStops: [
+        { type: TabStopType.RIGHT, position: TabStopPosition.MAX },
+      ],
+      children: [
+        text(left, { bold: leftBold }),
+        new TextRun({ children: [new Tab()] }),
+        text(right),
+      ],
+      spacing: { after: 40 },
+    });
+
+  const titleP = (title) =>
+    new Paragraph({
+      alignment: alignMap[theme.sectionAlign] || AlignmentType.CENTER,
+      spacing: { before: 200, after: 60 },
+      children: [text(title, { bold: true, size: sizeHalfPt + 2 })],
+      border:
+        theme.divider === "none"
+          ? undefined
+          : {
+              bottom: {
+                color: accentHex,
+                space: 1,
+                size: theme.divider === "thick" ? 12 : 6,
+                style: BorderStyle.SINGLE,
+              },
+            },
+    });
+
+  const bullet = (str) =>
+    new Paragraph({
+      children: [text(str)],
+      bullet: { level: 0 },
+      spacing: { after: 20 },
+    });
+
   const children = [];
 
-  // Header: Name centered + contact line centered
+  // Header
   children.push(
     new Paragraph({
-      alignment: AlignmentType.CENTER,
+      alignment: alignMap[theme.headerAlign] || AlignmentType.CENTER,
       children: [text(cv.fullName, { bold: true, size: 32 })],
       spacing: { after: 80 },
     })
   );
-  const contact = [cv.address, cv.city, cv.email, cv.phone]
+  const contact = [
+    cv.address,
+    cv.city,
+    cv.email,
+    cv.phone,
+    cv.linkedin,
+    cv.portfolio,
+  ]
     .filter(Boolean)
     .join(" \u2022 ");
   children.push(
     new Paragraph({
-      alignment: AlignmentType.CENTER,
+      alignment: alignMap[theme.headerAlign] || AlignmentType.CENTER,
       children: [text(contact)],
-      spacing: { after: 200 },
+      spacing: { after: 100 },
     })
   );
+  if (cv.description) {
+    children.push(
+      new Paragraph({
+        alignment: alignMap[theme.headerAlign] || AlignmentType.CENTER,
+        children: [text(cv.description, { italics: true })],
+        spacing: { after: 200 },
+      })
+    );
+  }
 
   // Education
-  children.push(sectionTitle("Education"));
+  children.push(titleP(sectionTitle(theme, lang, "education")));
   cv.education.forEach((it) => {
     children.push(twoColRow(it.institution, it.location, true));
     children.push(twoColRow(it.degree, it.date));
@@ -99,7 +129,7 @@ export async function exportToWord(cv, filename = "cv.docx") {
   });
 
   // Experience
-  children.push(sectionTitle("Experience"));
+  children.push(titleP(sectionTitle(theme, lang, "experience")));
   cv.experience.forEach((it) => {
     children.push(twoColRow(it.organization, it.location, true));
     children.push(twoColRow(it.position, it.date));
@@ -109,7 +139,7 @@ export async function exportToWord(cv, filename = "cv.docx") {
   });
 
   // Leadership
-  children.push(sectionTitle("Leadership & Activities"));
+  children.push(titleP(sectionTitle(theme, lang, "leadership")));
   cv.leadership.forEach((it) => {
     children.push(twoColRow(it.organization, it.location, true));
     children.push(twoColRow(it.role, it.date));
@@ -119,29 +149,39 @@ export async function exportToWord(cv, filename = "cv.docx") {
   });
 
   // Skills
-  children.push(sectionTitle("Skills & Interests"));
+  children.push(titleP(sectionTitle(theme, lang, "skills")));
   if (cv.skills.technical)
     children.push(
-      para([text("Technical: ", { bold: true }), text(cv.skills.technical)])
+      para([
+        text(`${labelFor(theme, lang, "technical")}: `, { bold: true }),
+        text(cv.skills.technical),
+      ])
     );
   if (cv.skills.language)
     children.push(
-      para([text("Language: ", { bold: true }), text(cv.skills.language)])
+      para([
+        text(`${labelFor(theme, lang, "language")}: `, { bold: true }),
+        text(cv.skills.language),
+      ])
     );
   if (cv.skills.laboratory)
     children.push(
-      para([text("Laboratory: ", { bold: true }), text(cv.skills.laboratory)])
+      para([
+        text(`${labelFor(theme, lang, "laboratory")}: `, { bold: true }),
+        text(cv.skills.laboratory),
+      ])
     );
   if (cv.skills.interests)
     children.push(
-      para([text("Interests: ", { bold: true }), text(cv.skills.interests)])
+      para([
+        text(`${labelFor(theme, lang, "interests")}: `, { bold: true }),
+        text(cv.skills.interests),
+      ])
     );
 
   const doc = new Document({
     styles: {
-      default: {
-        document: { run: { font: FONT, size: 22 } },
-      },
+      default: { document: { run: { font: FONT, size: sizeHalfPt } } },
     },
     sections: [
       {

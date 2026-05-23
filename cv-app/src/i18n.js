@@ -1,0 +1,273 @@
+// Bilingual strings (EN / ID) for both UI labels and CV section titles.
+// In Pro Mode the user can override the CV section titles manually.
+
+export const STRINGS = {
+  en: {
+    // App / nav
+    appTitle: "CV Authority",
+    subtitle: "Harvard Resume Builder",
+    liveOn: "Live: ON",
+    liveOff: "Live: OFF",
+    preview: "Preview",
+    fullscreen: "Fullscreen",
+    print: "Print",
+    exportPdf: "Export PDF",
+    exportWord: "Export Word",
+    darkMode: "Dark mode",
+    proMode: "Pro mode",
+    score: "CV Score",
+    zoom: "Zoom",
+    resetZoom: "Reset zoom",
+
+    // Stepper
+    steps: [
+      { short: "Personal", long: "Personal" },
+      { short: "Professional", long: "Professional" },
+      { short: "Education", long: "Education" },
+      { short: "Organization", long: "Organization" },
+      { short: "Other", long: "Other" },
+      { short: "Review", long: "Review" },
+    ],
+
+    // Buttons
+    saveContinue: "SAVE & CONTINUE",
+    back: "BACK",
+    finish: "FINISH",
+    addEducation: "Add Education",
+    addStudyAbroad: "Add Study Abroad",
+    addHighSchool: "Add High School",
+    addExperience: "Add Experience",
+    addLeadership: "Add Activity",
+    addBullet: "Add bullet",
+
+    // Step intros
+    personalIntro: "Enter your personal information",
+    personalHelp: "Help recruiters get to know you.",
+    professionalIntro: "Tell us about your professional experience",
+    professionalHelp:
+      "Start with the most recent role. Use action verbs and quantify results.",
+    educationIntro: "Add your education",
+    educationHelp: "Most recent degree first.",
+    organizationIntro: "Leadership & organizations",
+    organizationHelp:
+      "Clubs, volunteering, student government — anything that shows initiative.",
+    otherIntro: "Skills & interests",
+    otherHelp: "Optional, but recruiters love a personal touch.",
+    reviewIntro: "Review your CV",
+    reviewHelp: "Check the preview, see the score, then export.",
+
+    // Field labels
+    fields: {
+      fullName: "Full Name",
+      phone: "Phone (Mobile)",
+      email: "Email",
+      linkedin: "LinkedIn URL",
+      portfolio: "Portfolio / Website (Optional)",
+      address: "Address (Optional)",
+      city: "City, State / Zip",
+      description: "Short description about you",
+      descriptionHint: "Recommended: 100 to 150 characters",
+      institution: "Institution",
+      location: "Location",
+      degree: "Degree, Concentration, GPA",
+      graduationDate: "Graduation Date",
+      thesis: "Thesis (Optional)",
+      coursework: "Relevant Coursework / Honors",
+      organization: "Organization",
+      position: "Position Title",
+      role: "Role",
+      date: "Date",
+      bullets: "Bullet Points",
+      detail: "Detail (GPA, Honors, ACT/SAT…)",
+      coursePartner: "Coursework",
+      technical: "Technical",
+      language: "Language",
+      laboratory: "Laboratory",
+      interests: "Interests",
+    },
+
+    // CV section titles (used inside the rendered CV)
+    cvSections: {
+      education: "Education",
+      experience: "Experience",
+      leadership: "Leadership & Activities",
+      skills: "Skills & Interests",
+      skillsOptional: "Skills & Interests [Note: Optional]",
+      technical: "Technical",
+      language: "Language",
+      laboratory: "Laboratory",
+      interests: "Interests",
+    },
+
+    // Pro controls
+    pro: {
+      title: "Pro Mode",
+      typography: "Typography",
+      font: "Font family",
+      fontSize: "Body size",
+      lineHeight: "Line spacing",
+      colors: "Colors",
+      accent: "Accent color",
+      headingColor: "Heading color",
+      layout: "Layout",
+      headerAlign: "Header alignment",
+      sectionAlign: "Section title alignment",
+      divider: "Section divider",
+      dividerLine: "Line",
+      dividerNone: "None",
+      dividerThick: "Thick",
+      sectionTitles: "Section titles (override)",
+      reset: "Reset to defaults",
+      align: { left: "Left", center: "Center", right: "Right" },
+      sizes: { sm: "Small", md: "Medium", lg: "Large" },
+    },
+
+    // Score panel
+    scorePanel: {
+      title: "CV Score",
+      subtitle:
+        "An automatic ATS-style review of your CV. Scores are heuristic, not absolute.",
+      breakdown: "Score breakdown",
+      tips: "Tips to improve",
+      excellent: "Excellent",
+      good: "Good",
+      okay: "Needs work",
+      poor: "Weak",
+      reasons: "Detailed reasoning",
+    },
+  },
+
+  id: {
+    appTitle: "CV Authority",
+    subtitle: "Pembangun Resume Harvard",
+    liveOn: "Live: AKTIF",
+    liveOff: "Live: NONAKTIF",
+    preview: "Pratinjau",
+    fullscreen: "Layar Penuh",
+    print: "Cetak",
+    exportPdf: "Ekspor PDF",
+    exportWord: "Ekspor Word",
+    darkMode: "Mode malam",
+    proMode: "Mode Pro",
+    score: "Skor CV",
+    zoom: "Perbesar",
+    resetZoom: "Atur ulang",
+
+    steps: [
+      { short: "Pribadi", long: "Informasi Pribadi" },
+      { short: "Profesional", long: "Profesional" },
+      { short: "Pendidikan", long: "Pendidikan" },
+      { short: "Organisasi", long: "Organisasi" },
+      { short: "Lainnya", long: "Lainnya" },
+      { short: "Tinjau", long: "Tinjau" },
+    ],
+
+    saveContinue: "SIMPAN & LANJUTKAN",
+    back: "KEMBALI",
+    finish: "SELESAI",
+    addEducation: "Tambah Pendidikan",
+    addStudyAbroad: "Tambah Study Abroad",
+    addHighSchool: "Tambah Sekolah Menengah",
+    addExperience: "Tambah Pengalaman",
+    addLeadership: "Tambah Aktivitas",
+    addBullet: "Tambah poin",
+
+    personalIntro: "Masukkan informasi pribadi kamu",
+    personalHelp: "Bantu recruiter mengenal kamu.",
+    professionalIntro: "Ceritakan pengalaman profesional kamu",
+    professionalHelp:
+      "Mulai dari posisi terbaru. Gunakan kata kerja aktif dan ukur hasilnya.",
+    educationIntro: "Isi pendidikan kamu",
+    educationHelp: "Gelar/jenjang terbaru ditulis paling atas.",
+    organizationIntro: "Organisasi & kepemimpinan",
+    organizationHelp:
+      "Klub, kegiatan sukarela, pemerintahan mahasiswa — apapun yang menunjukkan inisiatif.",
+    otherIntro: "Keterampilan & minat",
+    otherHelp: "Opsional, tapi recruiter senang melihat sisi personal kamu.",
+    reviewIntro: "Tinjau CV kamu",
+    reviewHelp: "Cek pratinjau, lihat skor, lalu ekspor.",
+
+    fields: {
+      fullName: "Nama Lengkap",
+      phone: "Nomor Handphone (Mobile)",
+      email: "Alamat Email",
+      linkedin: "URL Profil LinkedIn",
+      portfolio: "Portofolio / URL Website (Opsional)",
+      address: "Alamat (opsional)",
+      city: "Kota, Provinsi / Kode Pos",
+      description: "Deskripsi singkat tentang kamu",
+      descriptionHint: "Direkomendasikan: 100 hingga 150 karakter",
+      institution: "Institusi",
+      location: "Lokasi",
+      degree: "Gelar, Konsentrasi, IPK",
+      graduationDate: "Tanggal Kelulusan",
+      thesis: "Skripsi / Tesis (Opsional)",
+      coursework: "Mata Kuliah Relevan / Penghargaan",
+      organization: "Organisasi",
+      position: "Jabatan",
+      role: "Peran",
+      date: "Periode",
+      bullets: "Poin-poin",
+      detail: "Detail (IPK, Penghargaan, ACT/SAT…)",
+      coursePartner: "Mata Kuliah",
+      technical: "Teknis",
+      language: "Bahasa",
+      laboratory: "Laboratorium",
+      interests: "Minat",
+    },
+
+    cvSections: {
+      education: "Pendidikan",
+      experience: "Pengalaman",
+      leadership: "Kepemimpinan & Aktivitas",
+      skills: "Keterampilan & Minat",
+      skillsOptional: "Keterampilan & Minat [Catatan: Opsional]",
+      technical: "Teknis",
+      language: "Bahasa",
+      laboratory: "Laboratorium",
+      interests: "Minat",
+    },
+
+    pro: {
+      title: "Mode Pro",
+      typography: "Tipografi",
+      font: "Jenis huruf",
+      fontSize: "Ukuran teks",
+      lineHeight: "Spasi baris",
+      colors: "Warna",
+      accent: "Warna aksen",
+      headingColor: "Warna judul",
+      layout: "Tata letak",
+      headerAlign: "Posisi header",
+      sectionAlign: "Posisi judul bagian",
+      divider: "Pemisah bagian",
+      dividerLine: "Garis",
+      dividerNone: "Tanpa",
+      dividerThick: "Tebal",
+      sectionTitles: "Judul bagian (kustom)",
+      reset: "Atur ulang",
+      align: { left: "Kiri", center: "Tengah", right: "Kanan" },
+      sizes: { sm: "Kecil", md: "Sedang", lg: "Besar" },
+    },
+
+    scorePanel: {
+      title: "Skor CV",
+      subtitle:
+        "Penilaian otomatis bergaya ATS untuk CV kamu. Bersifat heuristik, bukan absolut.",
+      breakdown: "Rincian skor",
+      tips: "Saran perbaikan",
+      excellent: "Sangat baik",
+      good: "Baik",
+      okay: "Perlu diperbaiki",
+      poor: "Kurang",
+      reasons: "Alasan detail",
+    },
+  },
+};
+
+export const SUPPORTED_LANGS = ["en", "id"];
+
+export const t = (lang, key) => {
+  const dict = STRINGS[lang] || STRINGS.en;
+  return key.split(".").reduce((acc, k) => (acc ? acc[k] : undefined), dict);
+};

@@ -1,12 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;600;700&family=EB+Garamond:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #f7f9fb;
-  --on-surface: #191c1e;
+  color-scheme: light dark;
 }
 
 html,
@@ -17,54 +16,64 @@ body,
 }
 
 body {
-  background: var(--bg);
-  color: var(--on-surface);
+  background: #f7f9fb;
+  color: #191c1e;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background: #0b1220;
+  color: #e2e8f0;
 }
 
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d8dadc;
+  background: #cbd5e1;
   border-radius: 10px;
 }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
 
-/* CV canvas */
+/* CV canvas (always white, even in dark mode — it's a printable doc) */
 .cv-canvas {
-  width: 794px; /* A4 width @ 96dpi */
-  min-height: 1123px; /* A4 height */
+  width: 794px; /* A4 @96dpi */
+  min-height: 1123px;
   background: #fff;
   color: #000;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  font-family: "Source Serif 4", Georgia, serif;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
   padding: 56px 64px;
   box-sizing: border-box;
+  font-family: var(--cv-font, "Source Serif 4", Georgia, serif);
+  font-size: var(--cv-font-size, 11pt);
+  line-height: var(--cv-line-height, 1.4);
 }
 
 .cv-canvas h1.cv-name {
   font-size: 18pt;
   font-weight: 700;
-  text-align: center;
   margin: 0 0 4px 0;
 }
 
 .cv-canvas .cv-contact {
-  text-align: center;
   font-size: 10pt;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
+  text-align: inherit;
 }
 
 .cv-canvas h2.cv-section {
   font-size: 12pt;
   font-weight: 700;
-  text-align: center;
   margin: 14px 0 6px 0;
   text-transform: none;
 }
@@ -73,7 +82,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 11pt;
 }
 
 .cv-canvas .cv-row .left {
@@ -83,18 +91,11 @@ body {
 .cv-canvas .cv-sub {
   display: flex;
   justify-content: space-between;
-  font-size: 11pt;
-}
-
-.cv-canvas .cv-sub .left {
-  font-style: normal;
 }
 
 .cv-canvas ul.cv-bullets {
   margin: 4px 0 8px 18px;
   padding: 0;
-  font-size: 11pt;
-  line-height: 1.4;
 }
 
 .cv-canvas ul.cv-bullets li {
@@ -103,12 +104,6 @@ body {
 
 .cv-canvas .cv-block {
   margin-bottom: 10px;
-}
-
-.cv-canvas hr.cv-hr {
-  border: none;
-  border-top: 1px solid #000;
-  margin: 4px 0 8px 0;
 }
 
 /* Print mode */
@@ -133,4 +128,109 @@ body {
 .p-inputtext,
 .p-inputtextarea {
   width: 100%;
+}
+
+/* === Modernised text inputs (matches pic3 style, identical feel light/dark) === */
+.cv-input.p-inputtext,
+.cv-input.p-inputtextarea {
+  width: 100%;
+  font-size: 14.5px;
+  line-height: 1.5;
+  padding: 0.7rem 0.95rem;
+  border-radius: 10px;
+  border: 1px solid #d6dbe2;
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.cv-input.p-inputtext::placeholder,
+.cv-input.p-inputtextarea::placeholder {
+  color: #94a3b8;
+}
+
+.cv-input.p-inputtext:hover,
+.cv-input.p-inputtextarea:hover {
+  border-color: #b8c0cc;
+}
+
+.cv-input.p-inputtext:focus,
+.cv-input.p-inputtextarea:focus,
+.cv-input.p-inputtext.p-focus,
+.cv-input.p-inputtextarea.p-focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background: #ffffff;
+}
+
+.dark .cv-input.p-inputtext,
+.dark .cv-input.p-inputtextarea {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+.dark .cv-input.p-inputtext::placeholder,
+.dark .cv-input.p-inputtextarea::placeholder {
+  color: #64748b;
+}
+.dark .cv-input.p-inputtext:hover,
+.dark .cv-input.p-inputtextarea:hover {
+  border-color: #475569;
+}
+.dark .cv-input.p-inputtext:focus,
+.dark .cv-input.p-inputtextarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+  background: #0f172a;
+}
+
+/* Default PrimeReact input fallback for any field that hasn't been migrated */
+.dark .p-inputtext,
+.dark .p-inputtextarea {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+.dark .p-inputtext:focus,
+.dark .p-inputtextarea:focus {
+  border-color: #60a5fa;
+}
+.dark .p-card {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.dark .p-card .p-card-body {
+  color: #e2e8f0;
+}
+.dark .p-divider.p-divider-horizontal::before {
+  border-color: #334155;
+}
+.dark .p-dropdown {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+.dark .p-dropdown-panel,
+.dark .p-dropdown-items-wrapper {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.dark .p-dropdown-item {
+  color: #e2e8f0 !important;
+}
+.dark .p-dropdown-item:hover {
+  background: #334155 !important;
+}
+.dark .p-selectbutton .p-button {
+  background: #1e293b;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+.dark .p-selectbutton .p-button.p-highlight {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
 }
