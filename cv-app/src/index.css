@@ -129,15 +129,74 @@ body {
 .p-inputtextarea {
   width: 100%;
 }
+
+/* === Modernised text inputs (matches pic3 style, identical feel light/dark) === */
+.cv-input.p-inputtext,
+.cv-input.p-inputtextarea {
+  width: 100%;
+  font-size: 14.5px;
+  line-height: 1.5;
+  padding: 0.7rem 0.95rem;
+  border-radius: 10px;
+  border: 1px solid #d6dbe2;
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.cv-input.p-inputtext::placeholder,
+.cv-input.p-inputtextarea::placeholder {
+  color: #94a3b8;
+}
+
+.cv-input.p-inputtext:hover,
+.cv-input.p-inputtextarea:hover {
+  border-color: #b8c0cc;
+}
+
+.cv-input.p-inputtext:focus,
+.cv-input.p-inputtextarea:focus,
+.cv-input.p-inputtext.p-focus,
+.cv-input.p-inputtextarea.p-focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background: #ffffff;
+}
+
+.dark .cv-input.p-inputtext,
+.dark .cv-input.p-inputtextarea {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+.dark .cv-input.p-inputtext::placeholder,
+.dark .cv-input.p-inputtextarea::placeholder {
+  color: #64748b;
+}
+.dark .cv-input.p-inputtext:hover,
+.dark .cv-input.p-inputtextarea:hover {
+  border-color: #475569;
+}
+.dark .cv-input.p-inputtext:focus,
+.dark .cv-input.p-inputtextarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+  background: #0f172a;
+}
+
+/* Default PrimeReact input fallback for any field that hasn't been migrated */
 .dark .p-inputtext,
 .dark .p-inputtextarea {
-  background: #1e293b;
-  color: #e2e8f0;
+  background: #0f172a;
+  color: #f1f5f9;
   border-color: #334155;
 }
 .dark .p-inputtext:focus,
 .dark .p-inputtextarea:focus {
-  border-color: #6366f1;
+  border-color: #60a5fa;
 }
 .dark .p-card {
   background: #1e293b;

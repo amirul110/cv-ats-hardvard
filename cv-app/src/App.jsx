@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Slider } from "primereact/slider";
 import { Dialog } from "primereact/dialog";
@@ -20,7 +20,7 @@ import { exportToPDF } from "./utils/exportPdf.js";
 import { exportToWord } from "./utils/exportWord.js";
 import { STRINGS, t } from "./i18n.js";
 
-const STORAGE_KEY = "cv-authority-state-v2";
+const STORAGE_KEY = "cv-authority-state-v3";
 
 const loadState = () => {
   try {
@@ -33,7 +33,6 @@ const loadState = () => {
 };
 
 export default function App() {
-  // ------- Bootstrap from localStorage -------
   const persisted = loadState();
   const [cv, setCV] = useState(persisted?.cv || initialCV);
   const [step, setStep] = useState(persisted?.step ?? 0);
@@ -42,13 +41,11 @@ export default function App() {
   const [pro, setPro] = useState(persisted?.pro ?? false);
   const [theme, setTheme] = useState(persisted?.theme || defaultTheme);
 
-  const [zoom, setZoom] = useState(70);
-  const [fullscreen, setFullscreen] = useState(false);
-  const [previewOpenMobile, setPreviewOpenMobile] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [zoom, setZoom] = useState(85);
   const cvRef = useRef(null);
   const toast = useRef(null);
 
-  // Persist
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEY,
@@ -56,7 +53,6 @@ export default function App() {
     );
   }, [cv, step, lang, dark, pro, theme]);
 
-  // Apply dark mode class
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
@@ -70,6 +66,7 @@ export default function App() {
   const handleSaveContinue = () => {
     if (step < steps.length - 1) {
       goNext();
+      window.scrollTo({ top: 0, behavior: "smooth" });
       toast.current?.show({
         severity: "success",
         summary: tr("saveContinue"),
@@ -80,6 +77,8 @@ export default function App() {
   };
 
   const handleExportPDF = async () => {
+    // Open preview to mount the CV node, then capture
+    setPreviewOpen(true);
     setTimeout(async () => {
       try {
         const filename = `${(cv.fullName || "cv").replace(/\s+/g, "_")}_CV.pdf`;
@@ -97,7 +96,7 @@ export default function App() {
           detail: String(err.message || err),
         });
       }
-    }, 100);
+    }, 250);
   };
 
   const handleExportWord = async () => {
@@ -119,8 +118,7 @@ export default function App() {
     }
   };
 
-  // ------- Step content -------
-  const accent = theme.accent || "#1f6feb";
+  const accent = theme.accent || "#2563eb";
 
   const renderStep = () => {
     const common = { cv, setCV, lang, accent };
@@ -144,7 +142,7 @@ export default function App() {
             onExportPdf={handleExportPDF}
             onExportWord={handleExportWord}
             onPrint={() => window.print()}
-            onPreview={() => setFullscreen(true)}
+            onPreview={() => setPreviewOpen(true)}
           />
         );
       default:
@@ -152,19 +150,18 @@ export default function App() {
     }
   };
 
-  const zoomScale = zoom / 100;
-
-  // ------- Layout -------
   return (
     <div
-      className={`h-screen flex flex-col overflow-hidden ${
-        dark ? "dark bg-slate-950 text-slate-200" : "bg-slate-50 text-slate-900"
+      className={`min-h-screen flex flex-col ${
+        dark
+          ? "dark bg-slate-950 text-slate-100"
+          : "bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900"
       }`}
     >
       <Toast ref={toast} />
 
       {/* TOP NAV */}
-      <header className="flex items-center justify-between h-16 px-5 md:px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-30">
+      <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-5 md:px-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-3">
           <span
             className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-violet-600 text-white font-bold flex items-center justify-center shadow-sm"
@@ -183,7 +180,6 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Lang */}
           <div className="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-full text-[11px] font-bold">
             <button
               className={`px-3 py-1 rounded-full transition ${
@@ -207,7 +203,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Dark mode */}
           <div className="flex items-center gap-2">
             <i className="pi pi-moon text-slate-500 dark:text-slate-300 text-sm hidden md:inline" />
             <InputSwitch
@@ -218,7 +213,6 @@ export default function App() {
             />
           </div>
 
-          {/* Pro mode */}
           <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-700">
             <i
               className={`pi pi-sparkles text-sm hidden md:inline ${
@@ -236,46 +230,42 @@ export default function App() {
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-700">
             <Button
-              label={tr("exportWord")}
-              icon="pi pi-file-word"
+              label={tr("preview")}
+              icon="pi pi-eye"
               size="small"
               outlined
-              onClick={handleExportWord}
+              onClick={() => setPreviewOpen(true)}
             />
             <Button
-              label={tr("exportPdf")}
               icon="pi pi-file-pdf"
               size="small"
               severity="contrast"
               onClick={handleExportPDF}
+              tooltip={tr("exportPdf")}
+              tooltipOptions={{ position: "bottom" }}
+              className="hidden md:inline-flex"
             />
           </div>
-
-          {/* Mobile preview button */}
-          <Button
-            icon="pi pi-eye"
-            className="lg:hidden"
-            size="small"
-            outlined
-            onClick={() => setPreviewOpenMobile(true)}
-          />
         </div>
       </header>
 
-      {/* MAIN */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* EDITOR */}
-        <aside className="w-full lg:w-[520px] xl:w-[580px] flex-shrink-0 h-full overflow-y-auto bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 custom-scrollbar">
+      {/* CENTERED EDITOR */}
+      <main className="flex-1 w-full">
+        <div className="max-w-3xl xl:max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-10">
           {/* Stepper */}
-          <div className="sticky top-0 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur z-10 border-b border-slate-200 dark:border-slate-800 px-5 py-4">
-            <Stepper steps={steps} current={step} onJump={(i) => setStep(i)} />
+          <div className="mb-6 md:mb-8">
+            <Stepper
+              steps={steps}
+              current={step}
+              onJump={(i) => setStep(i)}
+            />
           </div>
 
-          <div className="px-5 py-5 space-y-5">
+          {/* Step content */}
+          <div className="space-y-6">
             {renderStep()}
-
             {pro && (
               <ProControls
                 theme={theme}
@@ -286,8 +276,8 @@ export default function App() {
             )}
           </div>
 
-          {/* Step navigation footer */}
-          <div className="sticky bottom-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-5 py-3 flex items-center justify-between gap-2">
+          {/* Footer navigation */}
+          <div className="mt-8 flex items-center justify-between gap-3 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70 rounded-2xl px-4 md:px-6 py-3 shadow-sm">
             <Button
               label={tr("back")}
               icon="pi pi-arrow-left"
@@ -305,7 +295,6 @@ export default function App() {
                 icon="pi pi-arrow-right"
                 iconPos="right"
                 severity="info"
-                size="small"
                 onClick={handleSaveContinue}
               />
             ) : (
@@ -313,16 +302,43 @@ export default function App() {
                 label={tr("finish")}
                 icon="pi pi-check"
                 severity="success"
-                size="small"
-                onClick={() => setFullscreen(true)}
+                onClick={() => setPreviewOpen(true)}
               />
             )}
           </div>
-        </aside>
+        </div>
+      </main>
 
-        {/* PREVIEW (desktop) */}
-        <main className="hidden lg:flex flex-1 h-full flex-col bg-slate-100 dark:bg-slate-900 overflow-hidden">
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-4 py-2">
+      {/* Floating Preview FAB on mobile / always-available shortcut */}
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="fixed bottom-6 right-6 lg:hidden z-20 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 flex items-center gap-2 font-semibold text-sm"
+      >
+        <i className="pi pi-eye" />
+        {tr("preview")}
+      </button>
+
+      {/* Preview dialog (only place the CV is rendered now) */}
+      <Dialog
+        header={
+          <div className="flex items-center gap-2">
+            <i className="pi pi-eye text-blue-500" />
+            <span>{tr("preview")}</span>
+          </div>
+        }
+        visible={previewOpen}
+        onHide={() => setPreviewOpen(false)}
+        maximized
+        modal
+        contentStyle={{
+          background: dark ? "#0f172a" : "#e9eef5",
+          padding: 0,
+        }}
+      >
+        <div className="flex flex-col h-full">
+          {/* Toolbar */}
+          <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 py-3 shadow-sm">
             <div className="flex items-center gap-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {tr("zoom")}
@@ -333,7 +349,7 @@ export default function App() {
                 text
                 onClick={() => setZoom((z) => Math.max(40, z - 10))}
               />
-              <div style={{ width: 140 }}>
+              <div style={{ width: 160 }}>
                 <Slider
                   value={zoom}
                   onChange={(e) => setZoom(e.value)}
@@ -348,26 +364,19 @@ export default function App() {
                 text
                 onClick={() => setZoom((z) => Math.min(150, z + 10))}
               />
-              <span className="text-xs font-semibold w-10 text-right">
+              <span className="text-xs font-mono font-semibold w-12 text-right">
                 {zoom}%
               </span>
               <Button
                 icon="pi pi-refresh"
                 size="small"
                 text
-                onClick={() => setZoom(70)}
+                onClick={() => setZoom(85)}
                 tooltip={tr("resetZoom")}
                 tooltipOptions={{ position: "bottom" }}
               />
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                icon="pi pi-window-maximize"
-                label={tr("fullscreen")}
-                size="small"
-                outlined
-                onClick={() => setFullscreen(true)}
-              />
               <Button
                 icon="pi pi-print"
                 label={tr("print")}
@@ -375,107 +384,35 @@ export default function App() {
                 text
                 onClick={() => window.print()}
               />
+              <Button
+                icon="pi pi-file-word"
+                label={tr("exportWord")}
+                size="small"
+                outlined
+                onClick={handleExportWord}
+              />
+              <Button
+                icon="pi pi-file-pdf"
+                label={tr("exportPdf")}
+                size="small"
+                severity="contrast"
+                onClick={handleExportPDF}
+              />
             </div>
           </div>
 
+          {/* CV canvas */}
           <div className="flex-1 overflow-auto custom-scrollbar">
             <div className="flex justify-center py-8 px-4">
               <div
                 style={{
-                  transform: `scale(${zoomScale})`,
+                  transform: `scale(${zoom / 100})`,
                   transformOrigin: "top center",
                 }}
               >
                 <HarvardCV cv={cv} lang={lang} theme={theme} ref={cvRef} />
               </div>
             </div>
-          </div>
-        </main>
-      </div>
-
-      {/* Mobile preview dialog */}
-      <Dialog
-        header={tr("preview")}
-        visible={previewOpenMobile}
-        onHide={() => setPreviewOpenMobile(false)}
-        maximized
-        modal
-        contentStyle={{ background: dark ? "#0f172a" : "#eceef0" }}
-      >
-        <div className="flex flex-col items-center gap-4 py-4">
-          <div
-            style={{
-              transform: `scale(${Math.min(zoom, 80) / 100})`,
-              transformOrigin: "top center",
-            }}
-          >
-            <HarvardCV cv={cv} lang={lang} theme={theme} />
-          </div>
-        </div>
-      </Dialog>
-
-      {/* Fullscreen Preview */}
-      <Dialog
-        header={tr("preview")}
-        visible={fullscreen}
-        onHide={() => setFullscreen(false)}
-        maximized
-        modal
-        contentStyle={{ background: dark ? "#0f172a" : "#eceef0" }}
-      >
-        <div className="flex flex-col items-center gap-4 py-4">
-          <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-4 py-2 shadow-sm">
-            <span className="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400">
-              {tr("zoom")}
-            </span>
-            <Button
-              icon="pi pi-minus"
-              size="small"
-              text
-              onClick={() => setZoom((z) => Math.max(40, z - 10))}
-            />
-            <div style={{ width: 160 }}>
-              <Slider
-                value={zoom}
-                onChange={(e) => setZoom(e.value)}
-                min={40}
-                max={150}
-                step={5}
-              />
-            </div>
-            <Button
-              icon="pi pi-plus"
-              size="small"
-              text
-              onClick={() => setZoom((z) => Math.min(150, z + 10))}
-            />
-            <span className="text-xs font-semibold w-10 text-right">
-              {zoom}%
-            </span>
-            <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
-            <Button
-              icon="pi pi-file-word"
-              label={tr("exportWord")}
-              size="small"
-              text
-              onClick={handleExportWord}
-            />
-            <Button
-              icon="pi pi-file-pdf"
-              label={tr("exportPdf")}
-              size="small"
-              severity="contrast"
-              onClick={handleExportPDF}
-            />
-          </div>
-
-          <div
-            style={{
-              transform: `scale(${zoomScale})`,
-              transformOrigin: "top center",
-            }}
-          >
-            <HarvardCV cv={cv} lang={lang} theme={theme} />
           </div>
         </div>
       </Dialog>

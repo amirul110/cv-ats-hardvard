@@ -1,14 +1,17 @@
 import React from "react";
-import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import Field, { PanelCard, SectionTitle } from "../Field.jsx";
+import {
+  TextField,
+  TextAreaField,
+  PanelCard,
+  SectionTitle,
+} from "../Field.jsx";
 import { t } from "../../i18n.js";
 
 const Group = ({ title, children }) => (
-  <div className="mb-6">
-    <h3 className="text-sm font-bold tracking-tight mb-2 text-slate-700 dark:text-slate-200 uppercase">
+  <div className="mb-7">
+    <h3 className="text-[13px] font-bold tracking-wider mb-3 text-slate-700 dark:text-slate-200 uppercase">
       {title}
     </h3>
     {children}
@@ -21,11 +24,16 @@ export default function StepEducation({ cv, setCV, lang, accent }) {
   const updateList = (key, id, field, val) =>
     setCV((p) => ({
       ...p,
-      [key]: p[key].map((it) => (it.id === id ? { ...it, [field]: val } : it)),
+      [key]: p[key].map((it) =>
+        it.id === id ? { ...it, [field]: val } : it
+      ),
     }));
 
   const addItem = (key, template) =>
-    setCV((p) => ({ ...p, [key]: [...p[key], { ...template, id: Date.now() }] }));
+    setCV((p) => ({
+      ...p,
+      [key]: [...p[key], { ...template, id: Date.now() }],
+    }));
 
   const removeItem = (key, id) =>
     setCV((p) => ({ ...p, [key]: p[key].filter((it) => it.id !== id) }));
@@ -33,7 +41,7 @@ export default function StepEducation({ cv, setCV, lang, accent }) {
   const renderEntry = (key, it, fields, idx, total) => (
     <div
       key={it.id}
-      className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 mb-3 relative bg-slate-50/50 dark:bg-slate-900/40"
+      className="rounded-xl border border-slate-200 dark:border-slate-700/70 p-5 mb-4 relative bg-slate-50/60 dark:bg-slate-900/40"
     >
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -49,24 +57,26 @@ export default function StepEducation({ cv, setCV, lang, accent }) {
           />
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {fields.map(({ name, label, area }) => (
-          <Field key={name} label={label} className={area ? "md:col-span-2" : ""}>
-            {area ? (
-              <InputTextarea
-                rows={2}
-                autoResize
-                value={it[name] || ""}
-                onChange={(e) => updateList(key, it.id, name, e.target.value)}
-              />
-            ) : (
-              <InputText
-                value={it[name] || ""}
-                onChange={(e) => updateList(key, it.id, name, e.target.value)}
-              />
-            )}
-          </Field>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5">
+        {fields.map(({ name, label, area }) =>
+          area ? (
+            <TextAreaField
+              key={name}
+              label={label}
+              rows={2}
+              value={it[name] || ""}
+              onChange={(e) => updateList(key, it.id, name, e.target.value)}
+              className="md:col-span-2"
+            />
+          ) : (
+            <TextField
+              key={name}
+              label={label}
+              value={it[name] || ""}
+              onChange={(e) => updateList(key, it.id, name, e.target.value)}
+            />
+          )
+        )}
       </div>
     </div>
   );
