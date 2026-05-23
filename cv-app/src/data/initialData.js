@@ -1,10 +1,15 @@
-// Default Harvard-style CV data based on the template image
+// Default Harvard-style CV data based on the template image.
+// Extended with linkedin, portfolio, description (matching pic1 form fields).
+
 export const initialCV = {
   fullName: "Firstname Lastname",
   address: "Home or Campus Street Address",
   city: "City, State Zip",
   email: "youremail@college.harvard.edu",
   phone: "phone number",
+  linkedin: "linkedin.com/in/yourprofile",
+  portfolio: "",
+  description: "",
 
   education: [
     {
@@ -92,3 +97,45 @@ export const initialCV = {
     interests: "List activities you enjoy that may spark interview conversation",
   },
 };
+
+// Default theme used by the CV preview. Pro Mode mutates this.
+export const defaultTheme = {
+  font: "Source Serif 4",
+  fontSize: 11, // pt
+  lineHeight: 1.4,
+  accent: "#000000", // dividers, name color base
+  headingColor: "#000000",
+  bodyColor: "#000000",
+  headerAlign: "center", // 'left' | 'center' | 'right'
+  sectionAlign: "center",
+  divider: "line", // 'line' | 'none' | 'thick'
+  // override map (if any value set, use it instead of i18n string)
+  customSectionTitles: {
+    education: "",
+    experience: "",
+    leadership: "",
+    skills: "",
+  },
+};
+
+export const FONT_OPTIONS = [
+  { label: "Source Serif (Harvard default)", value: "Source Serif 4" },
+  { label: "Times New Roman", value: "Times New Roman" },
+  { label: "Georgia", value: "Georgia" },
+  { label: "Garamond", value: "Garamond" },
+  { label: "Arial", value: "Arial" },
+  { label: "Helvetica", value: "Helvetica" },
+  { label: "Calibri", value: "Calibri" },
+  { label: "Inter", value: "Inter" },
+];
+
+export const ACCENT_PRESETS = [
+  "#000000",
+  "#0f3a5b",
+  "#114b5f",
+  "#7b2d26",
+  "#5b3a82",
+  "#1f6feb",
+  "#0d7c66",
+  "#b34a25",
+];

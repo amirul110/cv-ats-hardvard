@@ -1,59 +1,65 @@
-# CV Authority — Harvard CV Builder (React + PrimeReact)
+# CV Authority — Harvard CV Builder
 
-A 100% client-side CV / resume builder that mirrors the Harvard "2025 Bullet" resume template included in this repo. No backend, no database — everything runs in the browser.
+A 100% client-side CV builder that mirrors the Harvard "2025 Bullet" resume template. No backend, no database — everything runs in the browser and persists to `localStorage`.
+
+## Highlights
+
+- **6-step wizard** (Personal → Professional → Education → Organization → Other → Review). The user must press **SIMPAN & LANJUTKAN / SAVE & CONTINUE** to advance, exactly like pic1.
+- **Bilingual EN / ID** — switching language also translates the CV section titles (Education ↔ Pendidikan, Experience ↔ Pengalaman, Leadership ↔ Kepemimpinan, etc.).
+- **Manual override** — Pro Mode lets the user override any section title with custom text.
+- **Live preview** — every keystroke updates the preview (toggle off if needed).
+- **Dark mode** — class-based Tailwind toggle.
+- **Pro Mode** (toggle in header) unlocks:
+  - Font family (Source Serif, Times New Roman, Georgia, Garamond, Arial, Helvetica, Calibri, Inter)
+  - Body size (9–14pt) and line spacing
+  - Accent color picker + 8 presets
+  - Heading color picker
+  - **Header alignment** (Left / Center / Right) — turn the centered Harvard header into a left-aligned modern look
+  - Section title alignment
+  - Section divider style (line / thick / none)
+  - Section title overrides (custom text per section)
+- **Zoom in / out** (40–150%) with slider and ± buttons.
+- **CV Score (1–100)** — heuristic ATS-style scoring with bilingual reasons covering 7 categories: Personal info, Contact validity, Education, Experience quality, Leadership, Skills, Format & length. Each category lists what's good (+) and what to improve (−) in EN or ID.
+- **Export PDF** (jsPDF + html2canvas, A4) and **Export Word** (`.docx`, respects font/color/alignment/custom titles).
+- **Print** — native browser print restricted to the CV canvas only.
+- **Persistence** — all form data, step progress, language, theme, dark/Pro toggles auto-saved to localStorage.
 
 ## Stack
 
-- React 19 + Vite
-- PrimeReact (form controls, buttons, dialog, slider, toast)
-- Tailwind CSS (layout & utilities)
-- jsPDF + html2canvas (Export PDF)
-- docx + file-saver (Export Word)
-
-## Features
-
-- **Live preview** — every keystroke updates the CV preview when "Live: ON" is enabled (default).
-- **Preview button** — opens a fullscreen high-fidelity preview (also forces a sync if Live is OFF).
-- **Zoom in / Zoom out** — slider + and − buttons (50%–150%) with reset.
-- **Export PDF** — generates an A4 PDF with the current CV.
-- **Export Word** — generates a `.docx` file matching the Harvard layout (centered name, two-column rows for org/location and role/date, bulleted achievements).
-- **Print** — uses native browser print, restricted to the CV canvas only.
-- **Add / remove** entries dynamically for Education, Study Abroad, High School, Experience, Leadership & Activities.
-- **Add / remove bullet points** per Experience and Leadership entry.
-- **EN / ID** language switch for the editor UI.
-- **Harvard layout sections**: Header, Education (incl. Study Abroad & High School), Experience, Leadership & Activities, Skills & Interests (Technical / Language / Laboratory / Interests).
-
-## Getting Started
-
-```bash
-cd cv-app
-npm install
-npm run dev      # http://localhost:5173
-npm run build    # production build to ./dist
-npm run preview  # preview the production build
-```
+React 19 · Vite · PrimeReact · Tailwind CSS (dark mode: class) · jsPDF · html2canvas · docx · file-saver
 
 ## Project Structure
 
 ```
 cv-app/
   src/
+    App.jsx                    Main shell: header, stepper, preview, dialogs, exports
+    i18n.js                    EN / ID translations (UI + CV section titles)
+    data/initialData.js        Default CV + theme + font / accent presets
     components/
-      Editor.jsx        # PrimeReact form for all CV sections
-      HarvardCV.jsx     # The Harvard-styled live preview canvas
-    data/
-      initialData.js    # Default content matching the 2025-template_bullet.docx
+      Stepper.jsx              Numbered step indicator (matches pic1)
+      Field.jsx                Field, SectionTitle, PanelCard primitives
+      HarvardCV.jsx            Themable Harvard preview canvas
+      ProControls.jsx          Font / size / line-height / colors / alignment / overrides
+      ScorePanel.jsx           Circular score, breakdown, tips, detailed reasons
+      steps/
+        StepPersonal.jsx       Step 1
+        StepProfessional.jsx   Step 2
+        StepEducation.jsx      Step 3 (incl. Study Abroad + High School)
+        StepOrganization.jsx   Step 4
+        StepOther.jsx          Step 5 (skills & interests)
+        StepReview.jsx         Step 6 (export buttons + score)
     utils/
-      exportPdf.js      # html2canvas + jsPDF
-      exportWord.js     # docx + file-saver
-    App.jsx             # Top nav, layout, zoom, preview dialog, export wiring
-    main.jsx            # PrimeReact provider + theme
-    index.css           # Tailwind + CV canvas styles
-  tailwind.config.js
-  vite.config.js
+      exportPdf.js
+      exportWord.js
+      score.js                 Heuristic CV scoring (1-100)
+    index.css                  Tailwind + CV canvas + dark-mode tweaks
 ```
 
-## Notes
+## Run locally
 
-- The CV canvas is laid out at A4 width (794px @ 96dpi) so PDF export captures crisp output at 2× scale.
-- All data lives in React state — refresh = reset. Add `localStorage` persistence later if needed.
+```bash
+cd cv-app
+npm install
+npm run dev
+```
